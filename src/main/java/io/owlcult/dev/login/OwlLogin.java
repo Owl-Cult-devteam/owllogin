@@ -1,5 +1,6 @@
 package io.owlcult.dev.login;
 
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -61,5 +62,10 @@ public class OwlLogin {
     public void onServerStarting(ServerStartingEvent event) {
         // Do something when the server starts
         LOGGER.info("SERVER STARTING");
+    }
+
+    @SubscribeEvent
+    public void onRegisterCommands(RegisterCommandsEvent event) {
+        loginCmd.register(event.getDispatcher());
     }
 }
