@@ -67,5 +67,6 @@ public class OwlLogin {
     @SubscribeEvent
     public void onRegisterCommands(RegisterCommandsEvent event) {
         loginCmd.register(event.getDispatcher());
+        loginCmd.login(event.getDispatcher());
     }
 }
