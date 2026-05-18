@@ -2,30 +2,28 @@ package io.owlcult.dev.login;
 
 import com.mojang.logging.LogUtils;
 import io.owlcult.dev.login.Player;
-
 import java.sql.*;
-
 import org.slf4j.Logger;
 
-public class DatabaseManager
-{
-    Connection conn;
-    Logger LOGGER = LogUtils.getLogger();
+public class DatabaseManager {
 
-    public DatabaseManager() {
+    static Connection conn;
+    static Logger LOGGER = LogUtils.getLogger();
+
+    public static void init_connection() {
         try {
-            conn = DriverManager.getConnection("jdbc:sqlite:owllogin.db");
+            if (conn == null || conn.isClosed()) {
+                conn = DriverManager.getConnection("jdbc:sqlite:owllogin.db");
 
-            if (conn != null)
-                LOGGER.info("Connected to database");
-            else
-                LOGGER.warn("Connection is null");
+                if (conn != null) LOGGER.info("Connected to database");
+                else LOGGER.warn("Connection is null");
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void init() {
+    public static void init() {
         Statement st;
         try {
             st = conn.createStatement();
@@ -36,10 +34,12 @@ public class DatabaseManager
         LOGGER.info("Statement created, initializing table...");
 
         try {
-            st.execute("CREATE TABLE IF NOT EXISTS users (\n" +
+            st.execute(
+                "CREATE TABLE IF NOT EXISTS users (\n" +
                     "id INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
                     "nickname VARCHAR(30) UNIQUE NOT NULL,\n" +
-                    "password_hash VARCHAR(255) UNIQUE NOT NULL)");
+                    "password_hash VARCHAR(255) UNIQUE NOT NULL)"
+            );
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -78,9 +78,9 @@ public class DatabaseManager
             pst.setString(1, nickname);
 
             try (ResultSet rs = pst.executeQuery()) {
-                if (rs.next())
-                    result.password_hash = rs.getString("password_hash");
-
+                if (rs.next()) result.password_hash = rs.getString(
+                    "password_hash"
+                );
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

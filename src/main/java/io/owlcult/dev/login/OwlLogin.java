@@ -44,6 +44,11 @@ public class OwlLogin {
     public void onServerStarting(ServerStartingEvent event) {
         // Do something when the server starts
         LOGGER.info("SERVER STARTING");
+
+        DatabaseManager.init_connection(); // Initialize the database connection one time per start
+        DatabaseManager.init(); // Initialize the database table
+
+        LOGGER.info("Database connection initialized");
     }
 
     @SubscribeEvent
