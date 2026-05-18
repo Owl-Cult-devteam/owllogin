@@ -48,16 +48,7 @@ public class DatabaseManager
     }
 
     public void push(Player p) {
-        LOGGER.info("New push request, creating statement...");
-
-        Statement st;
-        try {
-            st = conn.createStatement();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        LOGGER.info("Statement created, pushing data...");
+        LOGGER.info("New push request, pushing...");
 
         String sql = "INSERT INTO users(nickname, password_hash) VALUES(?, ?)";
 
