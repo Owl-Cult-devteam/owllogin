@@ -7,6 +7,10 @@ import net.minecraft.network.chat.Component;
 
 public class loginCmd {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+        DatabaseManager dbman = new DatabaseManager();
+
+        dbman.init();
+
         dispatcher.register(Commands.literal("login")
             .executes(
                 context -> {
