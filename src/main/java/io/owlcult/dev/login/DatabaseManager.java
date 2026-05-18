@@ -1,6 +1,9 @@
 package io.owlcult.dev.login;
 
 import com.mojang.logging.LogUtils;
+
+import io.owlcult.dev.login.model.Player;
+
 import java.sql.*;
 import org.slf4j.Logger;
 

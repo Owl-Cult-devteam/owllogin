@@ -1,4 +1,4 @@
-package io.owlcult.dev.login;
+package io.owlcult.dev.login.model;
 
 public class Player {
 

@@ -3,7 +3,7 @@ package io.owlcult.dev.login.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import io.owlcult.dev.login.DatabaseManager;
-import io.owlcult.dev.login.Player;
+import io.owlcult.dev.login.model.Player;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
