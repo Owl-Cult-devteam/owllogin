@@ -1,24 +1,22 @@
 package io.owlcult.dev.login;
 
-import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import org.slf4j.Logger;
-
 import com.mojang.logging.LogUtils;
-
 import io.owlcult.dev.login.command.LoginCommand;
 import io.owlcult.dev.login.command.RegisterCommand;
-
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(OwlLogin.MODID)
 public class OwlLogin {
+
     // Define mod id in a common place for everything to reference
     public static final String MODID = "owllogin";
     // Directly reference a slf4j logger
