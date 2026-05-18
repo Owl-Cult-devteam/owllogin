@@ -1,4 +1,4 @@
-package io.owlcult.dev.login;
+package io.owlcult.dev.login.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
