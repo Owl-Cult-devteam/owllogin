@@ -1,9 +1,7 @@
 package io.owlcult.dev.login;
 
 import com.mojang.logging.LogUtils;
-
 import io.owlcult.dev.login.model.Player;
-
 import java.sql.*;
 import org.slf4j.Logger;
 
@@ -40,7 +38,8 @@ public class DatabaseManager {
                 "CREATE TABLE IF NOT EXISTS users (\n" +
                     "id INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
                     "nickname VARCHAR(30) UNIQUE NOT NULL,\n" +
-                    "password_hash VARCHAR(255) UNIQUE NOT NULL)"
+                    "password_hash VARCHAR(255) UNIQUE NOT NULL,\n" +
+                    "last_login TIMESTAMP NOT NULL)"
             );
         } catch (SQLException e) {
             throw new RuntimeException(e);
