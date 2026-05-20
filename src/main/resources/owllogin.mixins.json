@@ -2,7 +2,8 @@
   "required": true,
   "package": "io.owlcult.dev.login.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [],
+  "mixins": [
+  ],
   "injectors": {
     "defaultRequire": 1
   },

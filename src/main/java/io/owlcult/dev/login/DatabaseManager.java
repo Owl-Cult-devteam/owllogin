@@ -38,8 +38,7 @@ public class DatabaseManager {
                 "CREATE TABLE IF NOT EXISTS users (\n" +
                     "id INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
                     "nickname VARCHAR(30) UNIQUE NOT NULL,\n" +
-                    "password_hash VARCHAR(255) UNIQUE NOT NULL,\n" +
-                    "last_login TIMESTAMP NOT NULL)"
+                    "password_hash VARCHAR(255) UNIQUE NOT NULL)"
             );
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -69,7 +68,9 @@ public class DatabaseManager {
 
     public Player get(String nickname) {
         Player result = new Player();
+
         result.nickname = nickname;
+        result.password_hash = "";
 
         String sql = "SELECT password_hash FROM users WHERE nickname = ?";
 
@@ -79,9 +80,11 @@ public class DatabaseManager {
             pst.setString(1, nickname);
 
             try (ResultSet rs = pst.executeQuery()) {
-                if (rs.next()) result.password_hash = rs.getString(
-                    "password_hash"
-                );
+                if (rs.next()) {
+                    result.password_hash = rs.getString(
+                            "password_hash"
+                    );
+                }
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

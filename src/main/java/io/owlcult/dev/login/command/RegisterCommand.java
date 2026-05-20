@@ -2,6 +2,8 @@ package io.owlcult.dev.login.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import io.owlcult.dev.login.AuthController;
+import io.owlcult.dev.login.AuthState;
 import io.owlcult.dev.login.DatabaseManager;
 import io.owlcult.dev.login.model.Player;
 import net.minecraft.commands.CommandSourceStack;
@@ -19,17 +21,16 @@ public class RegisterCommand {
                     "password",
                     StringArgumentType.string()
                 ).executes(context -> {
-                    DatabaseManager man = new DatabaseManager();
-
-                    // context.getSource().sendSystemMessage(
-                    //     Component.literal(
-                    //         "Введите /register <password> (еще раз?) для подтверждения пароля" // TODO: Михкуст, блять, че за хуйню ты сделал тут я не пойму
-                    //     )
-                    // );
-
                     if (
                         context.getSource().getPlayer() == null // If request not from player
                     ) return 0; // Exit
+
+                    if (AuthController.get_player_state(context.getSource().getPlayer().getScoreboardName()) != AuthState.NOT_REGISTERED) {
+                        context.getSource().sendFailure(Component.literal("You already registered"));
+                        return 0;
+                    }
+
+                    DatabaseManager man = new DatabaseManager();
 
                     Player p = new Player();
 
@@ -45,6 +46,8 @@ public class RegisterCommand {
                     );
 
                     man.push(p);
+
+                    context.getSource().getPlayer().connection.disconnect(Component.literal("Registration successful. Please, reconnect"));
 
                     return 1;
                 })

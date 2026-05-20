@@ -3,6 +3,11 @@ package io.owlcult.dev.login;
 import com.mojang.logging.LogUtils;
 import io.owlcult.dev.login.command.LoginCommand;
 import io.owlcult.dev.login.command.RegisterCommand;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.level.GameType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -10,6 +15,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import org.slf4j.Logger;
 
@@ -49,11 +55,36 @@ public class OwlLogin {
         DatabaseManager.init(); // Initialize the database table
 
         LOGGER.info("Database connection initialized");
+
+        AuthController.init();
     }
 
     @SubscribeEvent
     public void onRegisterCommands(RegisterCommandsEvent event) {
         LoginCommand.register(event.getDispatcher());
         RegisterCommand.register(event.getDispatcher());
+    }
+
+    @SubscribeEvent
+    public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            LOGGER.info("Подключение игрока " + player.getGameProfile().getName() + " успешно перехвачено.");
+
+            player.setGameMode(GameType.ADVENTURE);
+            player.setTabListHeader(Component.literal("Not logged in"));
+
+            player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, -1, 255, false, false));
+            player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, -1, 255, false, false));
+            player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, -1, 255, false, false));
+
+            AuthController.player_connected(player.getScoreboardName(), player);
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            AuthController.player_disconnected(player.getScoreboardName(), player);
+        }
     }
 }
