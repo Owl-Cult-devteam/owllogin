@@ -64,7 +64,7 @@ public class LoginCommand {
                         } else {
                             Player p = dbman.get(context.getSource().getPlayer().getScoreboardName());
 
-                            if (!password.equals(p.password_hash)) { // TODO: Add hashing
+                            if (!p.hashPassword(password).equals(p.password_hash)) { 	
                                 context.getSource().sendFailure(Component.literal("неправильно, попробуй еще раз"));
                             } else {
                                 AuthController.set_player_state(p, AuthState.LOGGED_IN);
