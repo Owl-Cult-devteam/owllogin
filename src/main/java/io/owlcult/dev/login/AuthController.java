@@ -8,12 +8,12 @@ import com.mojang.logging.LogUtils;
 import io.owlcult.dev.login.model.Player;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.level.ServerPlayerGameMode;
-import org.antlr.v4.runtime.misc.Triple;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.level.GameType;
 import org.slf4j.Logger;
 
 public class AuthController {
-    public static List<Triple<Player, AuthState, ServerPlayerGameMode>> states;
+    public static List<Tuple<Player, AuthState>> states;
     static Logger LOGGER = LogUtils.getLogger();
 
     public static void init() {
@@ -27,54 +27,71 @@ public class AuthController {
 
         pm.password_hash = dbman.get(nickname).password_hash;
 
+        LOGGER.info("player gamemode: " + pm.gameMode.getName());
+
         if (pm.password_hash.isEmpty()) {
-            states.add(new Triple<>(pm, AuthState.NOT_REGISTERED, pm.gameMode));
+            states.add(new Tuple<>(pm, AuthState.NOT_REGISTERED));
             player.sendSystemMessage(Component.literal("Need to register, type /register <password>"));
             player.setTabListHeader(Component.literal("Need to register"));
             LOGGER.info("Player needs to register");
         } else {
-            states.add(new Triple<>(pm, AuthState.NOT_LOGGED_IN, pm.gameMode));
+            states.add(new Tuple<>(pm, AuthState.NOT_LOGGED_IN));
             player.sendSystemMessage(Component.literal("Need to login, type /login <password>"));
             player.setTabListHeader(Component.literal("Need to login"));
             LOGGER.info("Player needs to login");
         }
     }
 
-    public static void player_disconnected(String nickname) {
-        states = states.stream().filter(triple-> !triple.a.nickname.equals(nickname)).collect(Collectors.toList());
+    public static void player_disconnected(String nickname, ServerPlayer sp) {
+        sp.setGameMode(get_player_gamemode(nickname));
+        states = states.stream().filter(triple-> !triple.getA().nickname.equals(nickname)).collect(Collectors.toList());
     }
 
     public static AuthState get_player_state(String nickname) {
-        List<Triple<Player, AuthState, ServerPlayerGameMode>> t = states
+        List<Tuple<Player, AuthState>> t = states
                 .stream()
-                .filter(triple -> triple.a.nickname.equals(nickname))
-                .toList();
-
-        if (t.size() != 1) {
-            throw new RuntimeException("Impossible state");
-        }
-
-        return t.getFirst().b;
-    }
-
-    public static ServerPlayerGameMode get_player_gamemode(String nickname) {
-        List<Triple<Player, AuthState, ServerPlayerGameMode>> t = states
-                .stream()
-                .filter(triple -> triple.a.nickname.equals(nickname))
+                .filter(triple -> triple.getA().nickname.equals(nickname))
                 .toList();
 
         if (t.size() != 1)
-            throw new RuntimeException("Impossible state");
+            return null;
 
-        return t.getFirst().c;
+        return t.getFirst().getB();
     }
 
-    public static void set_player_state(Player p, AuthState state, ServerPlayerGameMode gm) {
-        for (int i = 0; i < states.size(); ++i) {
-            Triple<Player, AuthState, ServerPlayerGameMode> t = states.get(i);
+    public static GameType get_player_gamemode(String nickname) {
+        List<Tuple<Player, AuthState>> t = states
+                .stream()
+                .filter(triple -> triple.getA().nickname.equals(nickname))
+                .toList();
 
-            if (t.a.nickname.equals(p.nickname))
-                states.set(i, new Triple<>(p, state, gm));
+        if (t.size() != 1)
+            return null;
+
+        return t.getFirst().getA().gameMode;
+    }
+
+    public static void set_player_gamemode(String nickname, GameType mode) {
+        LOGGER.info("Player changed its gamemode to " + mode.getName());
+
+        for (int i = 0; i < states.size(); ++i) {
+            Tuple<Player, AuthState> t = states.get(i);
+
+            if (t.getA().nickname.equals(nickname)) {
+                Player pm = t.getA();
+                pm.gameMode = mode;
+
+                states.set(i, new Tuple<>(pm, t.getB()));
+            }
+        }
+    }
+
+    public static void set_player_state(Player p, AuthState state) {
+        for (int i = 0; i < states.size(); ++i) {
+            Tuple<Player, AuthState> t = states.get(i);
+
+            if (t.getA().nickname.equals(p.nickname))
+                states.set(i, new Tuple<>(t.getA(), state));
         }
     }
 }

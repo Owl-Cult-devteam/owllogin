@@ -2,6 +2,7 @@ package io.owlcult.dev.login.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.logging.LogUtils;
 import io.owlcult.dev.login.AuthController;
 import io.owlcult.dev.login.AuthState;
 import io.owlcult.dev.login.DatabaseManager;
@@ -10,9 +11,13 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.effect.MobEffects;
+import org.slf4j.Logger;
 
 public class LoginCommand {
+
+    static Logger LOGGER = LogUtils.getLogger();
 
     public static void register(
         CommandDispatcher<CommandSourceStack> dispatcher
@@ -62,14 +67,17 @@ public class LoginCommand {
                             if (!password.equals(p.password_hash)) { // TODO: Add hashing
                                 context.getSource().sendFailure(Component.literal("неправильно, попробуй еще раз"));
                             } else {
-                                AuthController.set_player_state(p, AuthState.LOGGED_IN, p.gameMode);
+                                AuthController.set_player_state(p, AuthState.LOGGED_IN);
                                 ServerPlayer sp = context.getSource().getPlayer();
 
                                 sp.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
                                 sp.removeEffect(MobEffects.BLINDNESS);
                                 sp.removeEffect(MobEffects.DAMAGE_RESISTANCE);
 
-                                sp.setGameMode(AuthController.get_player_gamemode(p.nickname).getGameModeForPlayer());
+                                LOGGER.info("Current " + sp.getScoreboardName() + " gamemode is " + sp.gameMode.toString());
+                                LOGGER.info("Restoring player gamemode - " + AuthController.get_player_gamemode(p.nickname).getName());
+
+                                sp.setGameMode(AuthController.get_player_gamemode(p.nickname));
 
                                 sp.setTabListHeader(Component.empty());
                             }

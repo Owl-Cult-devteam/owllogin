@@ -69,12 +69,12 @@ public class OwlLogin {
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            LOGGER.info("Подключение игрока " + player.getGameProfile().getName() + " успешно перехвачено.");
+            LOGGER.info("Подключение игрока " + player.getGameProfile().getName() + " успешно перехвачено. Режим игры: " + player.gameMode.getGameModeForPlayer().getName());
 
             Player pm = new Player();
 
             pm.nickname = player.getScoreboardName();
-            pm.gameMode = player.gameMode;
+            pm.gameMode = player.gameMode.getGameModeForPlayer();
 
             player.setGameMode(GameType.ADVENTURE);
             player.setTabListHeader(Component.literal("Not logged in"));
@@ -90,7 +90,15 @@ public class OwlLogin {
     @SubscribeEvent
     public void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            AuthController.player_disconnected(player.getScoreboardName());
+            AuthController.player_disconnected(player.getScoreboardName(), player);
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerChangedGameMode(PlayerEvent.PlayerChangeGameModeEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            if (AuthController.get_player_state(player.getScoreboardName()) == AuthState.LOGGED_IN)
+                AuthController.set_player_gamemode(player.getScoreboardName(), event.getNewGameMode());
         }
     }
 }
