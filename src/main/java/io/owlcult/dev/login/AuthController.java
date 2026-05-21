@@ -40,7 +40,7 @@ public class AuthController {
         }
     }
 
-    public static void player_disconnected(String nickname, ServerPlayer player) {
+    public static void player_disconnected(String nickname) {
         states = states.stream().filter(triple-> !triple.a.nickname.equals(nickname)).collect(Collectors.toList());
     }
 
