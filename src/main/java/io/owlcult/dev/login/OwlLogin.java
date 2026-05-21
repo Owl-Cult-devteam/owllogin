@@ -90,7 +90,7 @@ public class OwlLogin {
     @SubscribeEvent
     public void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            AuthController.player_disconnected(player.getScoreboardName(), player);
+            AuthController.player_disconnected(player.getScoreboardName());
         }
     }
 }
