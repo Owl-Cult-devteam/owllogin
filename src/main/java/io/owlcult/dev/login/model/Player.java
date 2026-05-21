@@ -1,13 +1,18 @@
 package io.owlcult.dev.login.model;
 
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+
+import net.minecraft.server.level.ServerPlayerGameMode;
+
 
 public class Player {
 
     public String nickname;
     public String password_hash;
+
     
     public String hashPassword(String password) {
     	try {
@@ -18,4 +23,7 @@ public class Player {
 			throw new RuntimeException();
 		}
     }
+
+    public ServerPlayerGameMode gameMode;
+
 }

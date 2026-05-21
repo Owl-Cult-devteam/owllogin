@@ -62,12 +62,14 @@ public class LoginCommand {
                             if (!p.hashPassword(password).equals(p.password_hash)) { 	
                                 context.getSource().sendFailure(Component.literal("неправильно, попробуй еще раз"));
                             } else {
-                                AuthController.set_player_state(p, AuthState.LOGGED_IN);
+                                AuthController.set_player_state(p, AuthState.LOGGED_IN, p.gameMode);
                                 ServerPlayer sp = context.getSource().getPlayer();
 
                                 sp.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
                                 sp.removeEffect(MobEffects.BLINDNESS);
                                 sp.removeEffect(MobEffects.DAMAGE_RESISTANCE);
+
+                                sp.setGameMode(AuthController.get_player_gamemode(p.nickname).getGameModeForPlayer());
 
                                 sp.setTabListHeader(Component.empty());
                             }
