@@ -2,7 +2,12 @@ package io.owlcult.dev.login;
 
 import com.mojang.logging.LogUtils;
 import io.owlcult.dev.login.model.Player;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
+import java.util.Arrays;
+
 import org.slf4j.Logger;
 
 public class DatabaseManager {
@@ -56,7 +61,7 @@ public class DatabaseManager {
             PreparedStatement pst = conn.prepareStatement(sql);
 
             pst.setString(1, p.nickname);
-            pst.setString(2, p.password_hash);
+            pst.setString(2, p.hashPassword(p.password_hash));
 
             pst.executeUpdate();
         } catch (SQLException e) {
@@ -81,9 +86,7 @@ public class DatabaseManager {
 
             try (ResultSet rs = pst.executeQuery()) {
                 if (rs.next()) {
-                    result.password_hash = rs.getString(
-                            "password_hash"
-                    );
+                    result.password_hash = rs.getString("password_hash");
                 }
             }
         } catch (SQLException e) {
