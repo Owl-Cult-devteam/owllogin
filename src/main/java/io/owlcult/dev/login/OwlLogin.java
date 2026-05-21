@@ -3,6 +3,7 @@ package io.owlcult.dev.login;
 import com.mojang.logging.LogUtils;
 import io.owlcult.dev.login.command.LoginCommand;
 import io.owlcult.dev.login.command.RegisterCommand;
+import io.owlcult.dev.login.model.Player;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -70,6 +71,11 @@ public class OwlLogin {
         if (event.getEntity() instanceof ServerPlayer player) {
             LOGGER.info("Подключение игрока " + player.getGameProfile().getName() + " успешно перехвачено.");
 
+            Player pm = new Player();
+
+            pm.nickname = player.getScoreboardName();
+            pm.gameMode = player.gameMode;
+
             player.setGameMode(GameType.ADVENTURE);
             player.setTabListHeader(Component.literal("Not logged in"));
 
@@ -77,7 +83,7 @@ public class OwlLogin {
             player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, -1, 255, false, false));
             player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, -1, 255, false, false));
 
-            AuthController.player_connected(player.getScoreboardName(), player);
+            AuthController.player_connected(player.getScoreboardName(), player, pm);
         }
     }
 
