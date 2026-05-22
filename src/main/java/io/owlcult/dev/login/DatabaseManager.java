@@ -95,4 +95,19 @@ public class DatabaseManager {
 
         return result;
     }
+
+    public void change(Player p) {
+        String sql = "UPDATE users SET password_hash = ? WHERE nickname = ?";
+
+        try {
+            PreparedStatement pst = conn.prepareStatement(sql);
+
+            pst.setString(1, p.password_hash);
+            pst.setString(2, p.nickname);
+
+            pst.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
