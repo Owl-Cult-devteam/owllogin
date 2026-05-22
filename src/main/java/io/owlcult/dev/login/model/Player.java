@@ -14,7 +14,7 @@ public class Player {
     public String password_hash;
     public GameType gameMode;
     
-    public String hashPassword(String password) {
+    public static String hashPassword(String password) {
     	try {
 			MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
 			return Arrays.toString(
