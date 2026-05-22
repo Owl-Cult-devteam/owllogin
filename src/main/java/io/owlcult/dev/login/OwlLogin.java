@@ -1,6 +1,7 @@
 package io.owlcult.dev.login;
 
 import com.mojang.logging.LogUtils;
+import io.owlcult.dev.login.command.ChangePasswordCommand;
 import io.owlcult.dev.login.command.LoginCommand;
 import io.owlcult.dev.login.command.RegisterCommand;
 import io.owlcult.dev.login.model.Player;
@@ -64,6 +65,7 @@ public class OwlLogin {
     public void onRegisterCommands(RegisterCommandsEvent event) {
         LoginCommand.register(event.getDispatcher());
         RegisterCommand.register(event.getDispatcher());
+        ChangePasswordCommand.register(event.getDispatcher());
     }
 
     @SubscribeEvent

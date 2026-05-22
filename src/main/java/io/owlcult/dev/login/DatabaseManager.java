@@ -3,10 +3,7 @@ package io.owlcult.dev.login;
 import com.mojang.logging.LogUtils;
 import io.owlcult.dev.login.model.Player;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.sql.*;
-import java.util.Arrays;
 
 import org.slf4j.Logger;
 
@@ -40,10 +37,12 @@ public class DatabaseManager {
 
         try {
             st.execute(
-                "CREATE TABLE IF NOT EXISTS users (\n" +
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
-                    "nickname VARCHAR(30) UNIQUE NOT NULL,\n" +
-                    "password_hash VARCHAR(255) UNIQUE NOT NULL)"
+                    """
+                            CREATE TABLE IF NOT EXISTS users (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            nickname VARCHAR(30) UNIQUE NOT NULL,
+                            password_hash VARCHAR(255) UNIQUE NOT NULL)
+                        """
             );
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -61,7 +60,7 @@ public class DatabaseManager {
             PreparedStatement pst = conn.prepareStatement(sql);
 
             pst.setString(1, p.nickname);
-            pst.setString(2, p.hashPassword(p.password_hash));
+            pst.setString(2, Player.hashPassword(p.password_hash));
 
             pst.executeUpdate();
         } catch (SQLException e) {

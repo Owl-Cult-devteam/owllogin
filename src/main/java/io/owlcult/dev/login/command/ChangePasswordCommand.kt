@@ -11,49 +11,52 @@ import net.minecraft.commands.Commands
 import net.minecraft.network.chat.Component
 
 class ChangePasswordCommand {
-    public fun register(
-        dispatcher: CommandDispatcher<CommandSourceStack>
-    ) {
-        dispatcher.register(
-            Commands.literal("change_password").then(
-                Commands.argument("new_password", StringArgumentType.string())
-                    .executes {
-                        context ->
-                        if (context.source.player == null)
-                            return@executes 0;
+    companion object {
+        @JvmStatic
+        fun register(
+            dispatcher: CommandDispatcher<CommandSourceStack>
+        ) {
+            dispatcher.register(
+                Commands.literal("change_password").then(
+                    Commands.argument("new_password", StringArgumentType.string())
+                        .executes {
+                            context ->
+                            if (context.source.player == null)
+                                return@executes 0
 
-                        val player = context.source.player!!
+                            val player = context.source.player!!
 
-                        when (AuthController.get_player_state(player.scoreboardName)){
-                            AuthState.NOT_REGISTERED -> {
-                                context.source.sendFailure(Component.literal("You're not registered"))
+                            when (AuthController.get_player_state(player.scoreboardName)){
+                                AuthState.NOT_REGISTERED -> {
+                                    context.source.sendFailure(Component.literal("You're not registered"))
 
-                                return@executes 0;
+                                    return@executes 0
+                                }
+
+                                AuthState.NOT_LOGGED_IN -> {
+                                    context.source.sendFailure(Component.literal("Login first"))
+
+                                    return@executes 0
+                                }
+
+                                else -> {}
                             }
 
-                            AuthState.NOT_LOGGED_IN -> {
-                                context.source.sendFailure(Component.literal("Login first"))
+                            val dbman = DatabaseManager()
 
-                                return@executes 0;
-                            }
+                            val pmod = Player()
 
-                            else -> {}
+                            pmod.nickname = player.scoreboardName
+                            pmod.password_hash = Player.hashPassword(context.getArgument("new_password", String::class.java))
+
+                            dbman.change(pmod)
+
+                            context.source.sendSystemMessage(Component.literal("Password changed!"))
+
+                            return@executes 1
                         }
-
-                        val dbman = DatabaseManager()
-
-                        val pmod = Player()
-
-                        pmod.nickname = player.scoreboardName
-                        pmod.password_hash = Player.hashPassword(context.getArgument("password", String::class.java))
-
-                        dbman.change(pmod)
-
-                        context.source.sendSystemMessage(Component.literal("Password changed!"))
-
-                        return@executes 1;
-                    }
+                )
             )
-        )
+        }
     }
 }

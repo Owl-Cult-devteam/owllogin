@@ -5,7 +5,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
-import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.level.GameType;
 
 
