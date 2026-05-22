@@ -109,4 +109,18 @@ public class DatabaseManager {
             throw new RuntimeException(e);
         }
     }
+
+    public int delete(Player p) {
+        String sql = "DELETE FROM users WHERE nickname = ?";
+
+        try {
+            PreparedStatement pst = conn.prepareStatement(sql);
+
+            pst.setString(1, p.nickname);
+
+            return pst.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
