@@ -41,7 +41,7 @@ public class DatabaseManager {
                             CREATE TABLE IF NOT EXISTS users (
                             id INTEGER PRIMARY KEY AUTOINCREMENT,
                             nickname VARCHAR(30) UNIQUE NOT NULL,
-                            password_hash VARCHAR(255) UNIQUE NOT NULL)
+                            password_hash VARCHAR(255) NOT NULL)
                         """
             );
         } catch (SQLException e) {
