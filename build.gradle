@@ -34,6 +34,11 @@ repositories {
         name = 'Kotlin for Forge'
         url = 'https://thedarkcolour.github.io/KotlinForForge/'
     }
+
+    maven {
+        name = "JitPack"
+        url = 'https://jitpack.io'
+    }
 }
 
 base {
@@ -143,15 +148,14 @@ dependencies {
     // implementation project(":myproject")
 
     jarJar(implementation("org.xerial:sqlite-jdbc:3.45.1.0")) {
-        version {
-            prefer("3.45.1.0")
-        }
+        prefer("3.45.1.0")
     }
 
     additionalRuntimeClasspath("org.xerial:sqlite-jdbc:3.45.1.0")
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 
     implementation 'thedarkcolour:kotlinforforge-neoforge:5.11.0'
+    implementation 'com.github.owl-cult-devteam:owlboost:1.1.0'
 
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
