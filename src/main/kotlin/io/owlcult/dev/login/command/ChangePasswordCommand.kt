@@ -1,11 +1,12 @@
 package io.owlcult.dev.login.command
 
+import com.github.owl_cult_devteam.owlboost.Option
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType
 import io.owlcult.dev.login.AuthController
 import io.owlcult.dev.login.AuthState
 import io.owlcult.dev.login.DatabaseManager
-import io.owlcult.dev.login.model.Player
+import io.owlcult.dev.login.model.PlayerModel
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands
 import net.minecraft.network.chat.Component
@@ -44,10 +45,10 @@ class ChangePasswordCommand {
 
                             val dbman = DatabaseManager()
 
-                            val pmod = Player()
+                            val pmod = PlayerModel()
 
                             pmod.nickname = player.scoreboardName
-                            pmod.password_hash = Player.hashPassword(context.getArgument("new_password", String::class.java))
+                            pmod.password_hash = Option.ofNullable(PlayerModel.hashPassword(context.getArgument("new_password", String::class.java)))
 
                             dbman.change(pmod)
 

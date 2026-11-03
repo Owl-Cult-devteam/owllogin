@@ -4,7 +4,7 @@ import com.mojang.logging.LogUtils;
 import io.owlcult.dev.login.command.ChangePasswordCommand;
 import io.owlcult.dev.login.command.LoginCommand;
 import io.owlcult.dev.login.command.RegisterCommand;
-import io.owlcult.dev.login.model.Player;
+import io.owlcult.dev.login.model.PlayerModel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -73,7 +73,7 @@ public class OwlLogin {
         if (event.getEntity() instanceof ServerPlayer player) {
             LOGGER.info("Подключение игрока " + player.getGameProfile().getName() + " успешно перехвачено. Режим игры: " + player.gameMode.getGameModeForPlayer().getName());
 
-            Player pm = new Player();
+            PlayerModel pm = new PlayerModel();
 
             pm.nickname = player.getScoreboardName();
             pm.gameMode = player.gameMode.getGameModeForPlayer();

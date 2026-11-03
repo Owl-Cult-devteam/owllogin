@@ -1,7 +1,8 @@
 package io.owlcult.dev.login;
 
+import com.github.owl_cult_devteam.owlboost.Option;
 import com.mojang.logging.LogUtils;
-import io.owlcult.dev.login.model.Player;
+import io.owlcult.dev.login.model.PlayerModel;
 
 import java.sql.*;
 
@@ -51,7 +52,7 @@ public class DatabaseManager {
         LOGGER.info("Table initialized");
     }
 
-    public void push(Player p) {
+    public void push(PlayerModel p) {
         LOGGER.info("New push request, pushing...");
 
         String sql = "INSERT INTO users(nickname, password_hash) VALUES(?, ?)";
@@ -60,7 +61,7 @@ public class DatabaseManager {
             PreparedStatement pst = conn.prepareStatement(sql);
 
             pst.setString(1, p.nickname);
-            pst.setString(2, Player.hashPassword(p.password_hash));
+            pst.setString(2, PlayerModel.hashPassword(p.password_hash.unwrap_or_null()));
 
             pst.executeUpdate();
         } catch (SQLException e) {
@@ -70,11 +71,11 @@ public class DatabaseManager {
         LOGGER.info("Data pushed, all done");
     }
 
-    public Player get(String nickname) {
-        Player result = new Player();
+    public PlayerModel get(String nickname) {
+        PlayerModel result = new PlayerModel();
 
         result.nickname = nickname;
-        result.password_hash = "";
+        result.password_hash = new Option.None<String>();
 
         String sql = "SELECT password_hash FROM users WHERE nickname = ?";
 
@@ -85,7 +86,7 @@ public class DatabaseManager {
 
             try (ResultSet rs = pst.executeQuery()) {
                 if (rs.next()) {
-                    result.password_hash = rs.getString("password_hash");
+                    result.password_hash = Option.ofNullable(rs.getString("password_hash"));
                 }
             }
         } catch (SQLException e) {
@@ -95,13 +96,13 @@ public class DatabaseManager {
         return result;
     }
 
-    public void change(Player p) {
+    public void change(PlayerModel p) {
         String sql = "UPDATE users SET password_hash = ? WHERE nickname = ?";
 
         try {
             PreparedStatement pst = conn.prepareStatement(sql);
 
-            pst.setString(1, p.password_hash);
+            pst.setString(1, p.password_hash.unwrap_or_null());
             pst.setString(2, p.nickname);
 
             pst.executeUpdate();
@@ -110,7 +111,7 @@ public class DatabaseManager {
         }
     }
 
-    public int delete(Player p) {
+    public int delete(PlayerModel p) {
         String sql = "DELETE FROM users WHERE nickname = ?";
 
         try {

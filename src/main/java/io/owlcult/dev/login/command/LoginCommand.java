@@ -6,12 +6,11 @@ import com.mojang.logging.LogUtils;
 import io.owlcult.dev.login.AuthController;
 import io.owlcult.dev.login.AuthState;
 import io.owlcult.dev.login.DatabaseManager;
-import io.owlcult.dev.login.model.Player;
+import io.owlcult.dev.login.model.PlayerModel;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.effect.MobEffects;
 import org.slf4j.Logger;
 
@@ -62,9 +61,9 @@ public class LoginCommand {
                                     );
                             return 0;
                         } else {
-                            Player p = dbman.get(context.getSource().getPlayer().getScoreboardName());
+                            PlayerModel p = dbman.get(context.getSource().getPlayer().getScoreboardName());
 
-                            if (!p.hashPassword(password).equals(p.password_hash)) { 	
+                            if (!PlayerModel.hashPassword(password).equals(p.password_hash.unwrap_or_null())) {
                                 context.getSource().sendFailure(Component.literal("неправильно, попробуй еще раз"));
                             } else {
                                 AuthController.set_player_state(p, AuthState.LOGGED_IN);

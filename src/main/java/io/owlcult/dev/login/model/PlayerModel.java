@@ -7,10 +7,11 @@ import java.util.Arrays;
 
 import net.minecraft.world.level.GameType;
 
+import com.github.owl_cult_devteam.owlboost.Option;
 
-public class Player {
+public class PlayerModel {
     public String nickname;
-    public String password_hash;
+    public Option<String> password_hash;
     public GameType gameMode;
     
     public static String hashPassword(String password) {
