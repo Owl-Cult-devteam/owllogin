@@ -71,8 +71,6 @@ public class OwlLogin {
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            LOGGER.info("Подключение игрока " + player.getGameProfile().getName() + " успешно перехвачено. Режим игры: " + player.gameMode.getGameModeForPlayer().getName());
-
             Player pm = new Player();
 
             pm.nickname = player.getScoreboardName();
